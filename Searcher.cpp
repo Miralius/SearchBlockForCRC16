@@ -1,4 +1,4 @@
-#include "Searcher.h"
+Ôªø#include "Searcher.h"
 #include "IO.h"
 #include "CRC16.h"
 #include <thread>
@@ -9,22 +9,22 @@ using namespace std::string_literals;
 
 void Searcher::getInputOutputInformation()
 {
-	std::cout << "¬‚Â‰ËÚÂ Ì‡Á‚‡ÌËÂ Ù‡ÈÎ‡ ‰‡ÏÔ‡: "s;
+	std::cout << "–í–≤–µ–¥–∏—Ç–µ –Ω–∞–∑–≤–∞–Ω–∏–µ —Ñ–∞–π–ª–∞ –¥–∞–º–ø–∞: "s;
 	std::getline(std::cin, m_inputDumpFileName);
 
-	std::cout << "»ÒÍ‡Ú¸ ·ÎÓÍË Ò ‡‰ÂÒ‡ (‚ ÙÓÏ‡ÚÂ 0xFFFF): "s;
+	std::cout << "–ò—Å–∫–∞—Ç—å –±–ª–æ–∫–∏ —Å –∞–¥—Ä–µ—Å–∞ (–≤ —Ñ–æ—Ä–º–∞—Ç–µ 0xFFFF): "s;
 	std::cin >> std::hex >> std::showbase >> m_begin;
 
-	std::cout << "ƒÓ ‡‰ÂÒ‡ (‚ ÙÓÏ‡ÚÂ 0xFFFF): "s;
+	std::cout << "–î–æ –∞–¥—Ä–µ—Å–∞ (–≤ —Ñ–æ—Ä–º–∞—Ç–µ 0xFFFF): "s;
 	std::cin >> m_end;
 
-	std::cout << " ÓÌÚÓÎ¸Ì‡ˇ ÒÛÏÏ‡ (‚ ÙÓÏ‡ÚÂ 0xFFFF): "s;
+	std::cout << "–ö–æ–Ω—Ç—Ä–æ–ª—å–Ω–∞—è —Å—É–º–º–∞ (–≤ —Ñ–æ—Ä–º–∞—Ç–µ 0xFFFF): "s;
 	std::cin >> m_crc16;
 
-	std::cout << "¬˚‚Ó‰ËÚ¸ ‚ ÍÓÌÒÓÎ¸ ÔÓ„ÂÒÒ («Õ¿◊»“≈À‹ÕŒ «¿Ã≈ƒÀﬂ≈“ –¿¡Œ“”!!!) Y/N: "s;
+	std::cout << "–í—ã–≤–æ–¥–∏—Ç—å –≤ –∫–æ–Ω—Å–æ–ª—å –ø—Ä–æ–≥—Ä–µ—Å—Å (–ó–ù–ê–ß–ò–¢–ï–õ–¨–ù–û –ó–ê–ú–ï–î–õ–Ø–ï–¢ –†–ê–ë–û–¢–£!!!) Y/N: "s;
 	char answer{};
 	std::cin >> answer;
-	m_log = (answer == 'Y' || answer == 'y' || answer == 'Õ' || answer == 'Ì') ? true : false;
+	m_log = (answer == 'Y' || answer == 'y' || answer == '–ù' || answer == '–Ω') ? true : false;
 }
 
 void Searcher::doJob()
@@ -32,14 +32,14 @@ void Searcher::doJob()
 	auto dump = IO::loadingBinaryFile<byte>(std::move(m_inputDumpFileName));
 	if (m_begin > dump.size())
 	{
-		std::cout << "¬‚Â‰ÂÌ ÌÂÒÛ˘ÂÒÚ‚Û˛˘ËÈ Ì‡˜‡Î¸Ì˚È ‡‰ÂÒ : " << std::hex << std::showbase << m_begin
-			<< ", ÓÌ ·Û‰ÂÚ Á‡ÏÂÌÂÌ Ì‡ 0x0\n";
+		std::cout << "–í–≤–µ–¥–µ–Ω –Ω–µ—Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π –Ω–∞—á–∞–ª—å–Ω—ã–π –∞–¥—Ä–µ—Å : " << std::hex << std::showbase << m_begin
+			<< ", –æ–Ω –±—É–¥–µ—Ç –∑–∞–º–µ–Ω–µ–Ω –Ω–∞ 0x0\n";
 		m_begin = 0x0;
 	}
 	if (m_end > dump.size())
 	{
-		std::cout << "¬‚Â‰ÂÌ ÌÂÒÛ˘ÂÒÚ‚Û˛˘ËÈ ÍÓÌÂ˜Ì˚È ‡‰ÂÒ : " << std::hex << std::showbase << m_begin
-			<< ", ÓÌ ·Û‰ÂÚ Á‡ÏÂÌÂÌ Ì‡ " << dump.size() << '\n';
+		std::cout << "–í–≤–µ–¥–µ–Ω –Ω–µ—Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π –∫–æ–Ω–µ—á–Ω—ã–π –∞–¥—Ä–µ—Å : " << std::hex << std::showbase << m_begin
+			<< ", –æ–Ω –±—É–¥–µ—Ç –∑–∞–º–µ–Ω–µ–Ω –Ω–∞ " << dump.size() << '\n';
 		m_end = dump.size();
 	}
 	searchAdressesOfAllPossibleBlocks(std::move(dump));
@@ -84,11 +84,11 @@ void Searcher::searchAdressesOfAllPossibleBlocks(std::vector<byte>&& dump)
 						lock.unlock();
 						found.get().fetch_add(1, std::memory_order_relaxed);
 						std::lock_guard<std::recursive_mutex> consoleLock(*consoleMutex);
-						std::cout << "\nÕ‡È‰ÂÌ ÌÓ‚˚È ÂÁÛÎ¸Ú‡Ú! "
+						std::cout << "\n–ù–∞–π–¥–µ–Ω –Ω–æ–≤—ã–π —Ä–µ–∑—É–ª—å—Ç–∞—Ç! "
 							<< std::showbase << std::hex << std::uppercase << result << '\n';
 						if (!log)
 						{
-							std::cout << '\r' << "Õ‡È‰ÂÌÓ ·ÎÓÍÓ‚: "
+							std::cout << '\r' << "–ù–∞–π–¥–µ–Ω–æ –±–ª–æ–∫–æ–≤: "
 								<< std::dec << found.get().load(std::memory_order_relaxed);
 						}
 					}

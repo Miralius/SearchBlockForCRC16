@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <iostream>
 #include <vector>
@@ -37,7 +37,7 @@ public:
     static void showProgress(const size_t completed, const size_t total, const size_t found)
     {
         auto percent = std::trunc(10000 * (static_cast<float>(completed) / total)) / 100;
-        std::cout << '\r' << "Выполнено: " << std::dec << std::setw(6) << percent << "%, найдено блоков: " << found << "   ";
+        std::cout << '\r' << "Р’С‹РїРѕР»РЅРµРЅРѕ: " << std::dec << std::setw(6) << percent << "%, РЅР°Р№РґРµРЅРѕ Р±Р»РѕРєРѕРІ: " << found << "   ";
     }
 
     template <class T>
