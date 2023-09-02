@@ -80,7 +80,7 @@ void Searcher::searchAdressesOfAllPossibleBlocks(std::vector<byte>&& dump)
 						const auto endAddress = std::distance(dump.cbegin(), blockEnd) - 1;
 						auto result = std::make_pair(startAddress, endAddress);
 						std::unique_lock<std::recursive_mutex> lock(*mutex);
-						IO::addEntryInFile(result, "results.txt"s);
+						IO::addEntryInFile(std::move(result), "results.txt"s);
 						lock.unlock();
 						found.get().fetch_add(1, std::memory_order_relaxed);
 						std::lock_guard<std::recursive_mutex> consoleLock(*consoleMutex);
