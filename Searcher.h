@@ -26,7 +26,6 @@ private:
 	size_t m_begin;
 	size_t m_end;
 	uint16_t m_crc16;
-	bool m_log;
 	static constexpr uint16_t sc_polynome = 0x1021;
 	static constexpr uint16_t sc_initValue = 0xFFFF;
 };

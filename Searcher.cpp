@@ -20,11 +20,6 @@ void Searcher::getInputOutputInformation()
 
 	std::cout << "Контрольная сумма (в формате 0xFFFF): "s;
 	std::cin >> m_crc16;
-
-	std::cout << "Выводить в консоль прогресс (ЗНАЧИТЕЛЬНО ЗАМЕДЛЯЕТ РАБОТУ!!!) Y/N: "s;
-	char answer{};
-	std::cin >> answer;
-	m_log = (answer == 'Y' || answer == 'y' || answer == 'Н' || answer == 'н') ? true : false;
 }
 
 void Searcher::doJob()
@@ -50,7 +45,6 @@ void Searcher::searchAdressesOfAllPossibleBlocks(std::vector<byte>&& dump)
 	const auto startBlock = dump.cbegin() + m_begin;
 	const auto endBlock = dump.cbegin() + m_end + 1;
 
-	std::atomic<size_t> progressCount{};
 	std::atomic<size_t> found{};
 	const size_t n = std::distance(startBlock, endBlock);
 	const auto progressMax = n * n / 2;
@@ -63,8 +57,8 @@ void Searcher::searchAdressesOfAllPossibleBlocks(std::vector<byte>&& dump)
 	crc16Params params = { sc_polynome, sc_initValue, m_crc16 };
 
 	const auto task =
-		[atomicCount = std::ref(progressCount), found = std::ref(found), progressMax = progressMax,
-		mutex = &m_mutex, consoleMutex = &m_consoleMutex, log = m_log]
+		[found = std::ref(found), progressMax = progressMax,
+		mutex = &m_mutex, consoleMutex = &m_consoleMutex]
 	(std::vector<byte> dump, const size_t first, const size_t last, const size_t globalLast, const crc16Params params)
 		{
 			auto itStart = dump.cbegin() + first;
@@ -80,24 +74,14 @@ void Searcher::searchAdressesOfAllPossibleBlocks(std::vector<byte>&& dump)
 						const auto endAddress = std::distance(dump.cbegin(), blockEnd) - 1;
 						auto result = std::make_pair(startAddress, endAddress);
 						std::unique_lock<std::recursive_mutex> lock(*mutex);
-						IO::addEntryInFile(std::move(result), "results.txt"s);
+						IO::addEntryInFile(result, "results.txt"s);
 						lock.unlock();
 						found.get().fetch_add(1, std::memory_order_relaxed);
 						std::lock_guard<std::recursive_mutex> consoleLock(*consoleMutex);
 						std::cout << "\nНайден новый результат! "
-							<< std::showbase << std::hex << std::uppercase << result << '\n';
-						if (!log)
-						{
-							std::cout << '\r' << "Найдено блоков: "
+							<< std::showbase << std::hex << std::uppercase << std::move(result) << '\n';
+						std::cout << '\r' << "Найдено блоков: "
 								<< std::dec << found.get().load(std::memory_order_relaxed);
-						}
-					}
-					if (log)
-					{
-						atomicCount.get().fetch_add(1, std::memory_order_relaxed);
-						std::lock_guard<std::recursive_mutex> lock(*consoleMutex);
-						IO::showProgress(atomicCount.get().load(std::memory_order_relaxed), progressMax,
-							found.get().load(std::memory_order_relaxed));
 					}
 				}
 			}
